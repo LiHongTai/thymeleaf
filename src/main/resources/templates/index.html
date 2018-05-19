@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>员工列表</title>
+    <link href="css/bootstrap.css" type="text/css" rel="stylesheet"></link>
+    <script type="text/javascript" src="js/jquery-1.11.1.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+    <style type="text/css">
+        .pagination {
+            margin: 0px
+        }
+
+        .pagination > li > a, .pagination > li > span {
+            margin: 0 5px;
+            border: 1px solid #dddddd;
+        }
+
+        .glyphicon {
+            margin-right: 3px;
+        }
+
+        .highlight{
+            background-color: lightgreen;
+        }
+    </style>
+
+</head>
+<body>
+<div th:insert="header_footer :: header"></div>
+<div class="container">
+    <div class="row">
+        <div>
+            <ol class="breadcrumb" style="background-color:transparent;font-size: 20px">
+                <li><a th:href="#{app.website}">首页</a></li>
+                <li class="active">实战案例</li>
+                <li class="active">thymeleaf模板引擎实战</li>
+            </ol>
+        </div>
+        <h1 style="text-align: center" th:text="#{app.report.name}"></h1>
+        <div class="panel panel-default">
+            <div class="clearfix panel-heading ">
+
+                <div class="input-group" style="width: 500px;">
+                    <input id="txtKeyword" type="text" class="form-control" placeholder="请输入要查询的员工" th:value="${param.keyword}">
+                    <div class="input-group-btn">
+                        <button class="btn btn-primary" id="btnQuery"><span class="glyphicon glyphicon-zoom-in"></span>查询</button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>员工编号</th>
+                    <th>姓名</th>
+                    <th>部门</th>
+                    <th>岗位</th>
+                    <th>入职时间</th>
+                    <th>工资</th>
+                    <th>奖金</th>
+                    <th>&nbsp;</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="emp,stat:${emps}" th:class="${emp.job == 'MANAGER' || emp.job == 'PRESIDENT'}?'highlight':''">
+                    <td>[[${stat.index}]]</td>
+                    <td>[[emp.empno]]</td>
+                    <td th:text="${#strings.toLowerCase(emp.ename)}"></td>
+                    <td th:switch="${emp.dname}">
+                        <span th:case="RESEARCH">研发部</span>
+                        <span th:case="ACCOUNTING">会计部</span>
+                        <span th:case="SALES">销售部</span>
+                        <span th:case="*">其他部门</span>
+                    </td>
+                    <td th:text="${emp.job}"></td>
+                    <td th:text="${#dates.format(emp.hiredate,'yyyy年MM月dd日')}"></td>
+                    <td th:style="${emp.sal}>1500?'color:red;font-weight:bold':''">[[${#numbers.formatCurrency(emp.sal)}]]</td>
+                    <td th:text="${emp.comm} != null ? ${emp.comm}:'N/A'"></td>
+                    <td style="text-align: center">
+                        <button class="btn btn-xs btn-info"></span>详细</button>
+                        <button class="btn btn-xs btn-warning"></span>删除</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    document.getElementById("btnQuery").onclick = function(ev){
+        var url = "/?keyword=" + document.getElementById("txtKeyword").value;
+
+        //跳转到url地址
+        window.location.href=url;
+    };
+</script>
